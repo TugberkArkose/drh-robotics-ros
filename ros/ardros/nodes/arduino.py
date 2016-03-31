@@ -43,7 +43,7 @@ from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry
 from std_msgs.msg import String
 from ardros.srv import *
-from ardros.msg import *
+
 
 from SerialDataGateway import SerialDataGateway
 
@@ -154,29 +154,6 @@ class Arduino(object):
 			rospy.logwarn("Unexpected error:" + str(sys.exc_info()[0]))
 
 
-	def _BroadcastBatteryInfo(self, lineParts):
-		partsCount = len(lineParts)
-		#rospy.logwarn(partsCount)
-
-		if (partsCount  < 1):
-			pass
-		
-		try:
-			batteryVoltage = float(lineParts[1])
-			batteryState = BatteryState()
-			batteryState.voltage = batteryVoltage
-			
-			if (batteryVoltage <= self._VoltageLowlimit):
-				batteryState.isLow = 1
-			if (batteryVoltage <= self._VoltageLowLowlimit):
-				batteryState.isLowLow = 1;
-
-			self._BatteryStatePublisher.publish(batteryState)
-			
-			#rospy.loginfo(batteryState)
-		
-		except:
-			rospy.logwarn("Unexpected error:" + str(sys.exc_info()[0]))
 
 	def _WriteSerial(self, message):
 		self._SerialPublisher.publish(String(str(self._Counter) + ", out: " + message))
@@ -205,9 +182,6 @@ class Arduino(object):
 		self._OdometryTransformBroadcaster = tf.TransformBroadcaster()
 		self._OdometryPublisher = rospy.Publisher("odom", Odometry)
 
-		self._VoltageLowlimit = rospy.get_param("~batteryStateParams/voltageLowlimit", "12.0")
-		self._VoltageLowLowlimit = rospy.get_param("~batteryStateParams/voltageLowLowlimit", "11.7")
-		self._BatteryStatePublisher = rospy.Publisher("battery", BatteryState)
 		
 		self._SetDriveGainsService = rospy.Service('setDriveControlGains', SetDriveControlGains, self._HandleSetDriveGains)
 

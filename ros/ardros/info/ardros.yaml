@@ -1,4 +1,4 @@
-port: /dev/ttyACM0
+port: /dev/ttyUSB0
 #port: /dev/ttyUSB0
 baudRate: 115200
 batteryStateParams: {voltageLowlimit: 12.0, voltageLowLowlimit: 11.7}
